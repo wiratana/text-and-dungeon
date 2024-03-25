@@ -1,16 +1,15 @@
 import os
+import telebot
 from dotenv import load_dotenv
 
 load_dotenv()
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-    print(os.environ.get("BOT_TOKEN"))
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
+bot = telebot.TeleBot(BOT_TOKEN)
 
+@bot.message_handler(commands=['start', 'help'])
+def send_welcome(message):
+    print(message)
+    bot.reply_to(message, "yeyeyeye")
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+bot.infinity_polling()
