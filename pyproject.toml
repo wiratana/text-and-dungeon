@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "text-and-dungeon"
+version = "0.1.0"
+description = "official text and dungeon telegram bot source code"
+authors = ["wiratana <andikawiratana@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pyTelegramBotAPI = "^4.16.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
