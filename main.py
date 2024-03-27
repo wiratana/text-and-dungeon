@@ -1,4 +1,6 @@
 import os
+import threading
+
 import telebot
 import sqlite3
 from dotenv import load_dotenv
@@ -12,7 +14,6 @@ bot = telebot.TeleBot(BOT_TOKEN)
 def timestamp_to_time(timestamp):
     return datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S.%f")
 
-@bot.message_handler(commands=['display_data_inbox'])
 def display_data_inbox(message):
     with sqlite3.connect("db.sqlite3") as con:
         cur = con.cursor()
@@ -22,7 +23,6 @@ def display_data_inbox(message):
 
         bot.reply_to(message, response or 'tidak ada data gan')
 
-@bot.message_handler(commands=['display_data_outbox'])
 def display_data_outbox(message):
     with sqlite3.connect("db.sqlite3") as con:
         cur = con.cursor()
@@ -32,7 +32,6 @@ def display_data_outbox(message):
 
         bot.reply_to(message, response or 'tidak ada data gan')
 
-@bot.message_handler(commands=['delete_all_data_inbox'])
 def delete_all_data_inbox(message):
     with sqlite3.connect("db.sqlite3") as con:
         cur = con.cursor()
@@ -41,7 +40,6 @@ def delete_all_data_inbox(message):
         cur.close()
         bot.reply_to(message, "inbox terhapus gan")
 
-@bot.message_handler(commands=['delete_all_data_outbox'])
 def delete_all_data_outbox(message):
     with sqlite3.connect("db.sqlite3") as con:
         cur = con.cursor()
@@ -50,7 +48,6 @@ def delete_all_data_outbox(message):
         cur.close()
         bot.reply_to(message, "outbox terhapus gan")
 
-@bot.message_handler(commands=['hello', 'start', 'hai', 'now'])
 def retrieve_message(message):
     with sqlite3.connect("db.sqlite3") as con:
         request = message
@@ -80,5 +77,25 @@ def retrieve_message(message):
 
         con.commit()
         cur.close()
+
+@bot.message_handler(commands=['hello', 'start', 'hai', 'now'])
+def handle_retrieve_message(message):
+    threading.Thread(target=retrieve_message, args=(message,)).start()
+
+@bot.message_handler(commands=['delete_all_data_outbox'])
+def handle_delete_all_data_outbox(message):
+    threading.Thread(target=delete_all_data_outbox, args=(message,)).start()
+
+@bot.message_handler(commands=['delete_all_data_inbox'])
+def handle_delete_all_data_inbox(message):
+    threading.Thread(target=delete_all_data_inbox, args=(message,)).start()
+
+@bot.message_handler(commands=['display_data_outbox'])
+def handle_display_data_outbox(message):
+    threading.Thread(target=display_data_outbox, args=(message,)).start()
+
+@bot.message_handler(commands=['display_data_inbox'])
+def handle_display_data_inbox(message):
+    threading.Thread(target=display_data_inbox, args=(message,)).start()
 
 bot.infinity_polling()
