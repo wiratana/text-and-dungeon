@@ -129,7 +129,10 @@ def display_data_student_by_nim(message):
     if (message.text.isnumeric()):
         cur.execute("SELECT * FROM student WHERE nim=%s", (int(message.text),))
         student = cur.fetchone()
-        response = "\n".join([str(property) for property in student])
+        if(not student):
+            response = "data tidak ditemukan"
+        else:
+            response = "\n".join([str(property) for property in student])
         write_inbox(message, "display_data_student_by_nim", 1)
         write_outbox(bot.reply_to(message, response or 'tidak ada data mahasiswa yang seperti itu ngab'))
         cur.close()
