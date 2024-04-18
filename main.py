@@ -15,8 +15,7 @@ con = mysql.connector.connect(
     host=os.environ.get("HOST"),
     user=os.environ.get("USERNAME"),
     password=os.environ.get("PASSWORD"),
-    database=os.environ.get("DB"),
-    connect_timeout=60
+    database=os.environ.get("DB")
 )
 
 
@@ -185,6 +184,7 @@ def display_menu(message, functions):
 
 @bot.message_handler(func=lambda message: True)
 def auto_response(message):
+    print(message)
     global con
     cur = con.cursor()
 
